@@ -98,15 +98,15 @@ const styles=() => {
 
 
 const imgToApp=() => {
-	return src(['src/images/**/*.{jpg,jpeg,png,gif,webp,avif}',
-		'src/images/**/*.svg',
-		'!src/images/sprites',
-		'!src/images/sprites/**/*'],{ base: 'src/images' })
-		.pipe(dest('app/images'));
+	return src(['src/img/**/*.{jpg,jpeg,png,gif,webp,avif}',
+		'src/img/**/*.svg',
+		'!src/img/sprites',
+		'!src/img/sprites/**/*'],{ base: 'src/img' })
+		.pipe(dest('app/img'));
 }
 const imgToDist=() => {
-	return src(['app/images/**/*.{webp,avif,svg}'],{ base: 'app/images' })
-		.pipe(dest('dist/images'));
+	return src(['app/img/**/*.{webp,avif,svg}'],{ base: 'app/img' })
+		.pipe(dest('dist/img'));
 }
 
 
@@ -116,8 +116,8 @@ const resourcesToApp=() => {
 		.pipe(dest('app'));
 }
 
-const images=()=>{
-	return src('app/images/**/*.{jpg,jpeg,png,gif}')
+const img=()=>{
+	return src('app/img/**/*.{jpg,jpeg,png,gif}')
 		.pipe(imagemin(
 			[
 				imagemin.gifsicle({ interlaced: true }),
@@ -132,7 +132,7 @@ const images=()=>{
 			]
 		)
 		)
-		.pipe(dest('dist/images'))
+		.pipe(dest('dist/img'))
 }
 
 const fonts=() => {
@@ -142,13 +142,13 @@ const fonts=() => {
 	src(['src/fonts/*.ttf'])
 		.pipe(ttf2woff2())
 		.pipe(dest('app/fonts/'))
-	return src(['src/fonts/*.{woff,woff2}'])
+	return src(['src/fonts/*.{woff,woff2,OTF}'])
 		.pipe(dest('app/fonts/'))
 }
 
 const svgSprites=() => {
 
-	return src('src/images/sprites/*.svg')
+	return src('src/img/sprites/*.svg')
 		.pipe(svgSprite({
 			mode: {
 				stack: {
@@ -156,7 +156,7 @@ const svgSprites=() => {
 				}
 			}
 		}))
-		.pipe(dest('app/images'))
+		.pipe(dest('app/img'))
 }
 
 
@@ -245,14 +245,14 @@ const scriptsBuild=() => {
 
 
 const tinypngf=() => {
-	return src(['src/images/**/*.{png,jpg,jpeg}'])
+	return src(['src/img/**/*.{png,jpg,jpeg}'])
 		.pipe(tinypng({
 			key: 'bCyZdt2Xc2mQLhbZKDW0JjMr9xxcFdJ7',
-			sigFile: 'images/.tinypng-sigs',
+			sigFile: 'img/.tinypng-sigs',
 			log: true,
 			parallelMax: 50
 		}))
-		.pipe(dest('dist/images'));
+		.pipe(dest('dist/img'));
 }
 
 
@@ -260,7 +260,7 @@ const build=() => {
 	return src([
 
 		'app/fonts/**/*',
-		'app/images/**/*.{webp,avif,svg}',
+		'app/img/**/*.{webp,avif,svg}',
 		'app/*.*'
 
 	],{ base: 'app' })
@@ -300,10 +300,10 @@ const watchFiles=() => {
 	watch(['src/*.html'],htmlInclude);
 
 	watch(['src/includes/*.html'],htmlInclude);
-	watch('src/images/**/*.{jpg,jpeg,png,gif,webp,avif}', imgToApp);
+	watch('src/img/**/*.{jpg,jpeg,png,gif,webp,avif}', imgToApp);
 	
-	watch(['src/images/**/*.svg','!app/images/svg','!src/images/svg/**/*'],imgToApp),
-	watch('src/images/sprites/*.svg',svgSprites);
+	watch(['src/img/**/*.svg','!app/img/svg','!src/img/svg/**/*'],imgToApp),
+	watch('src/img/sprites/*.svg',svgSprites);
 	watch('src/resources/**/*.*',resourcesToApp);
 	watch('src/fonts/*.ttf',fonts);
 	watch(['src/js/**/*.js'],scripts);
@@ -324,7 +324,7 @@ exports.stylesBuild=stylesBuild;
 exports.watching=watching;
 exports.libJS=libJS;
 exports.scripts=scripts;
-exports.images=images;
+exports.img=img;
 exports.svgSprites=svgSprites;
 exports.htmlInclude=htmlInclude;
 exports.tinypngf=tinypngf;
@@ -339,7 +339,7 @@ exports.watchFiles=watchFiles;
 
 
 
-exports.build=series(cleanDist,scriptsBuild,libCSSDist,stylesBuild,imgToDist,images,build);
+exports.build=series(cleanDist,scriptsBuild,libCSSDist,stylesBuild,imgToDist,img,build);
 /* exports.default=parallel(htmlInclude,scripts,fonts,styles,browsersync,watching) */
 
 exports.default=series(clean,parallel(htmlInclude,scripts,imgToApp,svgSprites,resourcesToApp,fonts),libCSS,styles,parallel(browsersync,watchFiles))
