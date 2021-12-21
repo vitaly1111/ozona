@@ -4,7 +4,12 @@
   "description": "gulp",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {},
+    "scripts": {
+    "default": "json-server --watch db.json --port 3004"
+  },
+  "dependencies": {
+    "json-server": "^0.17.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",

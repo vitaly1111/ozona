@@ -1,4 +1,5 @@
 const { pipe }=require('stdout-stream');
+//const exports=require('webpack');
 const { util }=require('webpack');
 
 
@@ -25,8 +26,12 @@ const { src,dest,watch,parallel,series }=require('gulp'),
 	rename=require('gulp-rename'),
 	gutil=require('gulp-util'),
 	ftp=require('vinyl-ftp');
+	
+
 
 const webpackConfig=require('./webpack.config');
+
+//const server =require('./server')
 
 const libCSS=() => {
 	return src('src/vendor/normalize/normalize.css')
@@ -48,11 +53,11 @@ const libCSS=() => {
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest('app/css'))
 
-		
+
 }
 const libCSSDist=() => {
 	return src('src/vendor/normalize/normalize.css')
-		
+
 		.pipe(scss(
 			{
 				outputStyle: 'compressed'
@@ -67,10 +72,10 @@ const libCSSDist=() => {
 		.pipe(cleanCSS({
 			level: 2
 		}))
-		
+
 		.pipe(dest('dist/css'))
 
-	
+
 }
 
 const styles=() => {
@@ -116,7 +121,7 @@ const resourcesToApp=() => {
 		.pipe(dest('app'));
 }
 
-const img=()=>{
+const img=() => {
 	return src('app/img/**/*.{jpg,jpeg,png,gif}')
 		.pipe(imagemin(
 			[
@@ -172,24 +177,24 @@ const htmlInclude=() => {
 
 /* add if needed libs*/
 
-const libJS=()=> {
+const libJS=() => {
 	return src([''])
 		.pipe(sourcemaps.init())
 		.pipe(concat('libs.min.js'))
 		.pipe(uglify())
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest('app/js'))
-		
-} 
-const libJSDist=()=> {
+
+}
+const libJSDist=() => {
 	return src([''])
 		.pipe(sourcemaps.init())
 		.pipe(concat('libs.min.js'))
 		.pipe(uglify())
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest('dist/js'))
-		
-} 
+
+}
 
 /* -add if needed libs- */
 
@@ -208,7 +213,7 @@ const scripts=() => {
 
 }
 
-const stylesBuild=()=>{
+const stylesBuild=() => {
 	return src('src/scss/**/*.scss')
 
 		.pipe(scss(
@@ -233,14 +238,14 @@ const scriptsBuild=() => {
 	return src(['src/js/*.js'])
 		.pipe(webpackStream(webpackConfig))
 
-		
+
 		.pipe(uglify().on('error',notify.onError()))
 		.pipe(rename({
 			suffix: ".min"
 		}))
-		
+
 		.pipe(dest('app/js/'))
-		
+
 }
 
 
@@ -278,7 +283,7 @@ function watching() {
 
 }
 
-const browsersync=()=>{
+const browsersync=() => {
 
 	browserSync.init({
 		server: {
@@ -289,21 +294,21 @@ const browsersync=()=>{
 }
 
 const watchFiles=() => {
-/* 	browserSync.init({
-		server: {
-			baseDir: "app/"
-		}
-
-	}) */
+	/* 	browserSync.init({
+			server: {
+				baseDir: "app/"
+			}
+	
+		}) */
 	watch('src/scss/**/*.scss',styles);
 	watch('src/blocks/**/*.scss',styles);
 	watch(['src/*.html'],htmlInclude);
 
 	watch(['src/includes/*.html'],htmlInclude);
-	watch('src/img/**/*.{jpg,jpeg,png,gif,webp,avif}', imgToApp);
-	
+	watch('src/img/**/*.{jpg,jpeg,png,gif,webp,avif}',imgToApp);
+
 	watch(['src/img/**/*.svg','!app/img/svg','!src/img/svg/**/*'],imgToApp),
-	watch('src/img/sprites/*.svg',svgSprites);
+		watch('src/img/sprites/*.svg',svgSprites);
 	watch('src/resources/**/*.*',resourcesToApp);
 	watch('src/fonts/*.ttf',fonts);
 	watch(['src/js/**/*.js'],scripts);
@@ -328,6 +333,7 @@ exports.img=img;
 exports.svgSprites=svgSprites;
 exports.htmlInclude=htmlInclude;
 exports.tinypngf=tinypngf;
+
 exports.imgToApp=imgToApp;
 exports.imgToDist=imgToDist;
 exports.resourcesToApp=resourcesToApp;
